@@ -3,6 +3,8 @@
 
 By the end of this tutorial, you should be able to:
 
-- COMPLETE THIS
-- WITH MULTIPLE BULLETS
+- Understand key factors related to employee attrition and their potential impact on the business.
+- Apply clustering techniques (K-means, PCA) to uncover segments of employees with different characteristics.
+- Interpret and compare the resulting clusters in terms of job satisfaction, income, tenure, and attrition risk.
+- Evaluate how well the clustering reflects meaningful differences using visualizations and summary statistics.
 :::
