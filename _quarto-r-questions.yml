@@ -1,10 +1,10 @@
 project:
   render:
     - tutorial.qmd
-title: 'Questions document: R version'
+title: 'Tutorial 9: Descriptive Analytics in HRM'
 execute:
   eval: false
 format:
   html:
-    output-file: "tutorial-r-questions"
+    output-file: "tutorial-09-questions"
     output-ext:  "html"

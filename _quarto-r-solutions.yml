@@ -1,8 +1,8 @@
 project:
   render:
     - tutorial.qmd
-title: 'Solutions document: R version'
+title: 'Tutorial 9 Solutions: Descriptive Analytics in HRM'
 format:
   html:
-    output-file: "tutorial-r-solutions"
+    output-file: "tutorial-09-solutions"
     output-ext:  "html"
