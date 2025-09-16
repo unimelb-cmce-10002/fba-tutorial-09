@@ -1,11 +1,129 @@
 <!-- question-type: inclass -->
-### Exercise 7: Title
+### [Advanced, Optional] Exercise 7: Segmenting with All Variables
 
-This is the text for the question, with its accompanying code 
+::: {.callout-warning collapse=true}
+## Only complete if > 40 mins left in the tutorial!
+
+This exercise takes a while to complete. If there is less than 40 mins to go in class, skip this exercise and proceed to Exercise 8.
+:::
+
+::: {.callout-warning collapse=true}
+## What comes next is tough!
+
+In the exercises that follow, you’ll walk through how to do K-means clustering using **both numeric and categorical features**, with **dimensionality reduction via Principal Component Analysis (PCA)**.
+
+This is advanced content — we don’t expect you to write this code on your own nor will a detailed example such as this be expected in an assessment situation.
+We want to show you what **is** possible building off the skills you have acquired above.
+Follow along with your tutor and focus on building intuition for:
+
+- What each step does
+- Why we need it
+- How it connects to what you’ve learned so far
+
+Exercises after the data prepation will feel very familiar — only the somewhat involved data preparation is new.
+:::
+
+So far, we've limited our clustering to just five numeric features.  
+But in reality, companies might want to use **all available information** — including categorical variables like job role, marital status, and department — to uncover richer segmentation patterns.
+
+That introduces two new challenges:
+
+1. **K-means clustering only works with numeric inputs.**  
+   So how do we use categorical variables?
+
+2. **K-means works best with fewer dimensions.**  
+   But after we include all those dummy variables, we get many more!
+
+This exercise guides you through a workflow to overcome both challenges.
+
+
+
+**(a)** Run the data preparation pipeline below that:
+
+- Removes `employee_number` (a unique ID)
+- Removes `attrition` (our outcome variable — we want to use it *after* clustering)
+- Converts categorical variables into dummy (one-hot encoded) columns
+- Normalises all numeric columns
 
 ```{r}
-# Example code for the question
-1 + 1
+#| eval: false
+rec <- 
+    recipe(~ ., data = df) |>
+    # Remove these variables from processing pipeline
+    update_role(employee_number, new_role = "id") |>
+    update_role(attrition, new_role = "outcome") |>
+    # Drop variables that are constant across all rows
+    step_zv(all_predictors()) |>
+    # Create "Dummmy Variables" from Categoricals
+    step_dummy(all_nominal_predictors()) |>
+    # normalize all numerics, as before, but across all
+    step_normalize(all_numeric_predictors())
+
+df_pca_all <- 
+    prep(rec) |> 
+    bake(new_data = NULL) |>
+    # drop these from the PCA
+    select(-employee_number, -attrition)
+
+```
+
+**(b)** What does the `step_dummy()` line do?
+Why does this solve the problem we mentioned above — that K-means requires numeric inputs?
+
+**(c)** The pipeline also includes `step_normalize(all_numeric_predictors())`, but this doesn’t affect the dummy variables.
+Why might that be a good thing? What could go wrong if we normalised dummy variables?
+
+**(d)** Why do we remove `employee_number` and `attrition` after the `bake()` step?
+
+**(e)** Run PCA on the dataframe created in (a) and investigate the output. Think about how many components you would want to keep for the K-means analysis.
+
+```{r}
+#| eval: false
+pca_model <- 
+    prcomp(df_pca_all, 
+           center = FALSE, 
+           scale. = FALSE
+           )
+summary(pca_model)
+
+fviz_contrib(pca_model, choice = "var", axes = 2)
+
+
+```
+
+**(f)** Run the code below to keep the first 2 Principal Components. Can you explain why we chose to keep only the first two?
+
+```{r}
+#| eval: false 
+df_pca_2 <- as_tibble(pca_model$x[, 1:2])
+```
+
+**(g)** Use the Elbow method to determine the number of clusters you want to use in your K-means analysis. How many clusters would you choose?
+
+```{r}
+#| eval: false
+fviz_nbclust(
+  df_pca_2, 
+  kmeans,
+  method = "wss",     # Within-cluster sum of squares
+  k.max = 10,
+  nstart = 10
+)
+```
+
+**(h)** Run the code below to run K-means clustering with `k=3` clusters.
+
+```{r}
+#| eval: false
+set.seed(123)
+kmeans_pca <- kmeans(df_pca_2, centers = 3, nstart = 10)
+```
+
+**(i)** Visualise the PCA clustering results using the code below. Did the three cluster model perform better compared to Exercises 4 and 6? Try and explain why.
+
+```{r}
+#| eval: false
+fviz_cluster(kmeans_pca, data = df_pca_2)
 ```
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
@@ -22,20 +140,49 @@ Teaching Note
 🎯 **Learning Objective** 
 Students should:
 
-- XXXXX
+- Understand the challenges of clustering with both numeric and categorical data.
+- Recognize how dummy coding and scaling prepare data for clustering.
+- Understand the role of PCA in reducing dimensionality when working with high-dimensional data.
+- Be exposed to real-world workflows combining preprocessing, PCA, and K-means clustering.
 
 ✅   **Core Concepts to Highlight**
 
-List them here
+- Dummy coding (`step_dummy()`): Converts categorical variables into numeric format so they can be used in K-means.
+- Why not normalize dummies?: 0/1 coding should be preserved to retain their meaning and avoid distorting distance.
+- Dimensionality and PCA: High-dimensional clustering can be unstable; PCA helps compress relevant variation into fewer features.
+- Roles in recipes: Using `update_role()` to exclude outcome/ID variables from preprocessing.
+- Pipeline logic: Walk through the full transformation > PCA > clustering chain.
 
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-List as needed
+"What would happen if we left the categorical variables as-is?"
+
+"Why might a high number of dimensions be a problem for clustering?"
+
+"What does the PCA plot tell us about the data’s structure?"
 
 📌 **Common Misunderstandings**
 
-List as needed
+"Dummy variables are numeric, so they should be scaled."	
+
+* Dummy variables are already on a comparable 0/1 scale. Scaling distorts their meaning.
+
+"PCA makes the clustering more accurate."	
+
+* PCA simplifies the space; it may improve interpretability or speed, but not always clustering accuracy.
+
+"We can use attrition in the clustering."	
+
+* No — this would make the clustering predictive rather than exploratory. We use it after clustering to describe the segments.
+
+"All data prep is done automatically."	
+
+* Emphasize the explicit choices in the recipe: what’s included, excluded, and how each transformation works.
+
+"Two components = 2 variables."	
+
+* PCA components are linear combinations of many variables, not a one-to-one replacement.
 
 :::
 
@@ -55,11 +202,84 @@ Solution
 
 ::: {.solution-block-body}
 
-Here’s the explanation and code:
+**(a)** Data Prep Pipeline
 
-```{r}
-print("Hello, world!")
-```
+The provided code correctly does the following:
+
+- Uses `recipes::recipe()` to set up a preprocessing workflow
+- Removes `employee_number` (set as "id" role)
+- Removes `attrition` (set as "outcome" role)
+- Handles constant columns using `step_zv()`
+- Encodes all categorical variables via `step_dummy()`
+- Normalizes all numeric variables (excluding dummy variables) via `step_normalize()`
+- Applies `prep()` and `bake()` to generate the transformed dataset
+
+**(b)** What does `step_dummy()` do and why is it helpful?
+
+`step_dummy()` transforms each categorical variable into one or more binary columns (0/1) — one for each category level (except the reference category, unless one_hot = TRUE).
+
+This solves the problem that K-means only works with numeric inputs.
+By converting categoricals to numeric 0/1 dummies, we can now use them in the clustering algorithm.
+
+**(c)** Why not normalize dummy variables?
+
+Dummy variables only take values of 0 or 1. If we normalize them:
+
+- The 0/1 scale becomes continuous (e.g., -0.5 to +0.5), which changes the meaning.
+- It could distort distance calculations in K-means by over-emphasizing categorical differences.
+
+For example, if a rare category becomes a high-magnitude value after normalization, it may exaggerate its influence in clustering.
+
+Thus, dummy variables are best left as 0/1.
+
+**(d)** Why do we remove employee_number and attrition after `bake()`?
+
+These variables were excluded from the preprocessing steps via role assignment — but they still remain in the baked dataset.
+
+We remove them after `bake()` because:
+
+- `employee_number` is a unique ID and doesn't help clustering (and could distort distance).
+- `attrition` is an outcome variable, not a predictor — we use it after clustering to describe the segments, not to define them.
+
+**(e)** PCA Output
+
+The PCA model reveals how much variance is explained by each principal component.
+
+Key observations:
+
+- The first few components (e.g., PC1 and PC2) typically capture a large share of the variation.
+- Component contribution plots help interpret what kinds of variables dominate each component.
+
+**(f)** Why keep only 2 components?
+
+Choosing only 2 components as these pick up the most important features from back in Ex 1.
+
+**(g)** Choosing k via the Elbow method
+
+The Elbow plot helps determine the optimal number of clusters by showing diminishing returns in reducing within-cluster sum of squares.
+
+Look for a point where the curve "bends" — this is often between k = 3 to 4.
+
+Here, k = 3 is where there is a clear bend.
+
+**(h)** Run K-means clustering
+
+Code is correct. Students should observe that:
+
+- The `kmeans()` function uses the PCA-transformed data
+- `set.seed(123)` ensures reproducibility
+- `nstart = 10` gives multiple initializations
+
+**(i)** Cluster Visualisation
+
+The PCA cluster plot should show:
+
+- Clearer separation between clusters than in previous exercises
+- More balanced or tighter groupings, depending on how well PCA compressed the data
+
+The performance may feel better due to using more features and reducing noise through PCA.
+However, interpretation of clusters becomes harder, since we're no longer in the original feature space.
+
 :::
 
 :::

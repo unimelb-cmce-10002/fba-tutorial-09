@@ -1,12 +1,33 @@
 <!-- question-type: prepare -->
-### Exercise 2: Title
+### Exercise 2: Identifying Some Preliminary Patterns
 
-This is the text for the question, with its accompanying code 
+::: {.callout-warning collapse=true}
+### Why We're Not Giving You Template Code
 
-```{r}
-# Example code for the question
-1 + 1
-```
+You've had plenty of practice with `dplyr` tools like `group_by()`, `summarise()`, and `mutate()`. This question is designed to help you build fluency in writing tidyverse code from scratch.
+
+It's normal to feel unsure at first—but struggling a little helps solidify your skills. If you're stuck, re-use patterns from previous tutorials.
+:::
+
+
+Let's start exploring the dataset to identify patterns in attrition. 
+Our goal is to understand where attrition is most common and what kinds of employees are more likely to leave.
+
+**(a)** What is the overall attrition rate in the dataset?
+
+**(b)** Which departments or job roles seem to have the highest attrition? Use proportions, not just counts.
+
+**(c)** How do the following characteristics differ between employees who left and those who stayed?
+Use averages to compare:
+
+- Job satisfaction
+- Monthly income
+- Years at company
+- Distance from home
+- Age
+
+**(d)** Based on your findings, describe the typical profile of an employee who leaves. Are there any surprises?
+
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
 ::: {.content-visible when-profile="r-teaching-guide"}
@@ -22,20 +43,32 @@ Teaching Note
 🎯 **Learning Objective** 
 Students should:
 
-- XXXXX
+- Apply grouped summarisation to examine attrition patterns across categories.
+- Use pivot_wider() to restructure data for clearer comparison.
+- Interpret proportions and identify roles with high attrition rates.
 
 ✅   **Core Concepts to Highlight**
 
-List them here
+- Relative vs absolute comparisons: Why proportions (shares) are often more insightful than raw counts.
+- Data reshaping: Using `pivot_wider()` to improve readability and enable side-by-side comparisons.
+- Sorting by relevance: How `arrange()` can surface the most important categories (e.g. high attrition)
 
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-List as needed
+“Which job roles have the highest proportion of attrition?”
+
+“Why might it be misleading to just use counts (n) instead of proportions?”
+
+“If we wanted to visualise this, what type of chart would help?”
+
+“Why is it important to compare within group (e.g., share of leavers among each role) rather than across the whole company?”
 
 📌 **Common Misunderstandings**
 
-List as needed
+- Sorting by `n` instead of `share`: Students often default to sorting by total count, missing the within-group interpretation.
+- Confusing base rates: Some students assume high total attrition count = high attrition rate, without considering role size.
+- Zero values: Forgetting `values_fill = 0` may lead to NA values which confuse students when interpreting results.
 
 :::
 
@@ -55,11 +88,60 @@ Solution
 
 ::: {.solution-block-body}
 
-Here’s the explanation and code:
+**(a)**
 
 ```{r}
-print("Hello, world!")
+df |> 
+  group_by(department, attrition) |> 
+  summarise(n = n(), .groups = "drop") |> 
+  mutate(share = n / sum(n))
 ```
+
+
+**(b)**
+
+```{r}
+df |> 
+  group_by(job_role, attrition) |> 
+  summarise(n = n(), .groups = "drop") |> 
+  mutate(share = n / sum(n)) |> 
+  pivot_wider(
+    names_from = attrition,
+    values_from = share,
+    values_fill = 0
+  ) |> 
+    arrange(desc(Yes))
+```
+
+
+**(c)**
+
+```{r}
+#REMARK: across with an anonymous function is new. its faster to write
+# feel free to do it the manual way if more comfortable
+df |> 
+  group_by(attrition) |> 
+  summarise(
+    across(
+      c(job_satisfaction, monthly_income, years_at_company, distance_from_home, age),
+      \(x) mean(x, na.rm = TRUE)
+    ),
+    .groups = "drop"
+  )
+```
+
+
+**(d)**
+
+Employees who leave the company tend to:
+
+- Have lower job satisfaction
+- Be paid less
+- Have fewer years at the company
+- Live further from the office
+- Be slightly younger
+- Be in Sales or more junior Research roles
+
 :::
 
 :::

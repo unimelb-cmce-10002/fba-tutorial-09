@@ -1,48 +1,15 @@
 <!-- question-type: inclass -->
-### Exercise 8: Title
+### Exercise 8: Communicating Your Results
 
-This is the text for the question, with its accompanying code 
+You’ve now explored several ways to segment employees using clustering. 
+In this final task, you’ll choose the clustering model you believe worked best, and write a 1–2 paragraph summary of your preferred clustering model and what it reveals about employee groups that would make sense to a business manager.
 
-```{r}
-# Example code for the question
-1 + 1
-```
+Your summary should be clear, concise, and insightful — not just a restatement of your code.
 
-<!-- BEGIN PROFILE:r-teaching-guide -->
-::: {.content-visible when-profile="r-teaching-guide"}
+*Hints*:
 
-::: {.teaching-block}
-
-::: {.teaching-block-header}
-Teaching Note
-:::
-
-::: {.teaching-block-body}
-
-🎯 **Learning Objective** 
-Students should:
-
-- XXXXX
-
-✅   **Core Concepts to Highlight**
-
-List them here
-
-
-💬 **Suggested In-Class Prompts** (if needed)
-
-List as needed
-
-📌 **Common Misunderstandings**
-
-List as needed
-
-:::
-
-:::
-
-:::
-<!-- END PROFILE:r-teaching-guide -->
+- Use the "Write Like an Amazonian" tips from Group Assignment 1 to aid your writing. 
+- You may need some extra code to get you towards the most actionable and manager friendly insights. Adapt the code you have so far to get what you need.
 
 <!-- BEGIN PROFILE:r-solutions -->
 ::: {.content-visible when-profile="r-solutions" when-profile="r-teaching-guide"}
@@ -55,11 +22,7 @@ Solution
 
 ::: {.solution-block-body}
 
-Here’s the explanation and code:
-
-```{r}
-print("Hello, world!")
-```
+No unique solution. Discuss in class.
 :::
 
 :::

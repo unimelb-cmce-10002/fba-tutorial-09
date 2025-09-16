@@ -1,12 +1,77 @@
 <!-- question-type: inclass -->
-### Exercise 1: Title
+### Exercise 6: Segmentation with Dimensionality Reduction
 
-This is the text for the question, with its accompanying code 
+We now explore whether simplifying our dataset — by reducing the number of dimensions — might help improve clustering.
+
+Right now, we're clustering using all five numeric features. But some of these might contain similar information. 
+Dimensionality reduction helps us find a smaller number of new features (called components) that capture most of the variation in the data.
+Once we have reduced dimensionality, we can then run Segmentation on this reduced set of features.
+This will prove helpful in the next question when we want to use **all** variables in the dataset
+
+One common method of dimensionality reduction is Principal Component Analysis (PCA).
+
+
+**(a)** Ask your tutor to briefly explain the intuition behind the PCA method and how it works.
+Then, in your own words, write down one thing that PCA is trying to do.
+
+**(b)** Run the code below to apply PCA to the `df_scaled` data.
+Then use summary(pca_model) to inspect how much variance is explained by the first few components.
 
 ```{r}
-# Example code for the question
-1 + 1
+#| eval: false
+pca_model <- 
+    prcomp(df_scaled,
+           # because we have already done each of these
+           # set them to false
+           center = FALSE,   # if TRUE sets means to 0
+           scale. = FALSE)   # IF TRUE sets std dev to 1
+summary(pca_model)
 ```
+
+**(c)** After looking at the output, suppose a colleague suggests "use 3 principal components". Explain why he might make that suggestion.
+
+**(d)** Another way to choose how many components to keep is to look at which variables are being absorbed into each components.
+Run the code below, and then decide how many components you want to keep, justifying your decision.
+
+```{r}
+#| eval: false
+# PC1 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 1)
+
+# PC2 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 2)
+
+# PC3 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 3)
+
+# PC4 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 4)
+
+# PC5 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 5)
+```
+
+**(e)** Create a new PCA-transformed dataset with only the components you selected above by completing the code below:
+
+```{r}
+#| eval: false
+df_pca <- as_tibble(pca_model$x[, 1:YOUR_CHOICE])
+```
+
+**(f)** Run K-means on `df_pca` using 3 clusters.
+
+```{r}
+#| eval: false
+kmeans_pca <- kmeans(df_pca, centers = 3, nstart = 10)
+```
+
+**(g)** Visualise the PCA clustering results using the code below. Did the three cluster model perform better compared to Exercise 4? Try and explain why.
+
+```{r}
+#| eval: false
+fviz_cluster(kmeans_pca, data = df_pca)
+```
+
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
 ::: {.content-visible when-profile="r-teaching-guide"}
@@ -22,20 +87,37 @@ Teaching Note
 🎯 **Learning Objective** 
 Students should:
 
-- XXXXX
+- Understand the intuition behind dimensionality reduction using PCA.
+- Identify when and why PCA can improve clustering.
+- Practice applying PCA to scaled numeric data.
+- Use component loadings and variance explained to decide how many components to keep.
+- Evaluate the effect of dimensionality reduction on clustering quality.
 
 ✅   **Core Concepts to Highlight**
 
-List them here
+- Dimensionality reduction: Simplifying a dataset by summarizing information across correlated variables.
+- Principal Component Analysis (PCA): A method that transforms original variables into a smaller set of orthogonal components that explain the most variance.
+- Variance explained: Interpreting PCA output to understand how much of the original data structure is retained.
+- Component loadings: Using variable contributions to understand what each PC represents.
+- Segmentation in reduced space: Running k-means on the transformed data and comparing clustering results.
 
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-List as needed
+“What kinds of situations call for dimensionality reduction?”
+
+“Can you think of examples where two variables might be telling us the same thing?”
+
+“What are the tradeoffs between keeping more or fewer principal components?”
+
+“Does clustering look more stable or interpretable after PCA?”
 
 📌 **Common Misunderstandings**
 
-List as needed
+- Misinterpreting PCA axes: Students may think PCs are just the original variables reordered. Emphasize that each PC is a weighted combination of the original variables.
+- Ignoring the need to scale data: PCA assumes data is centered and scaled; remind students we did this in a previous exercise.
+- Using too many components: Keeping all components defeats the purpose of dimensionality reduction — we want a simplified representation.
+- Comparing cluster plots directly: Students may assume PCA space should "look" like original data space. Encourage focus on separation, not interpretability of axes.
 
 :::
 
@@ -55,11 +137,95 @@ Solution
 
 ::: {.solution-block-body}
 
-Here’s the explanation and code:
+**(a)**
+PCA is a technique for dimensionality reduction. It creates new variables (called *principal components*) that are combinations of the original variables. These components capture the largest possible variance in the data, with each new component orthogonal (independent) from the previous ones.
+
+PCA is trying to:  
+- Reduce the number of variables while retaining as much information as possible  
+- Identify patterns in the data by summarising correlated variables
+
+**(b)** 
 
 ```{r}
-print("Hello, world!")
+#| eval: true
+pca_model <- prcomp(df_scaled, center = FALSE, scale. = FALSE)
+summary(pca_model)
 ```
+This shows how much variance each principal component explains.
+
+- PC explain ~37% of the variance
+- PC2 ~20%
+- PC3 ~20%
+- PC4 and PC5 less
+
+This suggests the first 3 components explain around 80% of the total variance.
+
+**(c)** Why choose 3 components?
+
+Because the first 3 components together explain most of the variance in the data (usually >75–80%), they provide a good summary while reducing noise and complexity. Including more components adds little additional insight and may reintroduce noise.
+
+**(d)** Variable contributions to each component
+
+```{r}
+#| eval: true
+# PC1 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 1)
+
+# PC2 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 2)
+
+# PC3 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 3)
+
+# PC4 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 4)
+
+# PC5 variable contributions
+fviz_contrib(pca_model, choice = "var", axes = 5)
+```
+
+From these plots, we can see:
+
+PC1 may be driven mostly by `monthly_income`, `years_at_company` and `age`
+
+PC2 by `distance_from_home` and `job_satisfaction`
+ 
+PC3 again by by by `distance_from_home` and `job_satisfaction`
+
+Since the first two components clearly loads on a different set of variables, this supports the case for keeping 2 components.
+
+**(e)** 
+
+```{r}
+#| eval: true
+df_pca <- as_tibble(pca_model$x[, 1:2])
+```
+
+**(f)** 
+
+```{r}
+#| eval: true
+set.seed(123)
+kmeans_pca <- kmeans(df_pca, centers = 3, nstart = 10)
+```
+
+**(g)**
+
+```{r}
+#| eval: true
+fviz_cluster(kmeans_pca, data = df_pca)
+```
+
+
+We find:
+
+The clusters are more clearly separated in PCA space
+
+There's less overlap than in the original 5D space
+
+Interpretation:
+PCA helps reduce noise and overlapping signals, so the clusters become tighter and better defined. Especially when some variables were correlated, PCA unbundles that structure and makes segmentation easier.
+
 :::
 
 :::

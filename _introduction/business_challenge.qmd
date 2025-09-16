@@ -2,7 +2,7 @@
 
 ### The Topic: Why are employees leaving — and how can we group them to better understand attrition? {.unnumbered}
 
-Every time an employee leaves, companies incur real costs — from lost productivity to recruitment and training. Understanding **which types of employees are most at risk of leaving** is a key priority for HR analytics.
+Every time an employee leaves, companies incur real costs. Thus, understanding **which types of employees are most at risk of leaving** is a key priority for HR analytics.
 
 In this tutorial, we’ll use clustering techniques to group employees based on their characteristics and see whether some groups are more likely to quit. This lets us move beyond individual-level predictors to identify broader patterns and profiles — a common strategy in **descriptive analytics**.
 
@@ -34,6 +34,7 @@ We'll also explore how to choose the **right number of clusters**.
 Here's the packages we will need to complete the exercises:
 
 ```{r}
+#| message: false
 library(tidyverse)  # data manipulation and plotting
 library(janitor)    # cleaning column names
 library(recipes)    # For data preprocessing

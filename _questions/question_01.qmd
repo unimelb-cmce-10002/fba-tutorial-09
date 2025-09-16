@@ -1,12 +1,14 @@
 <!-- question-type: prepare -->
-### Exercise 1: Title
+### Exercise 1: The What and Why of employee attrition
 
-This is the text for the question, with its accompanying code 
+Employee attrition refers to people leaving the company — either voluntarily (resignation) or involuntarily (termination). 
+While some turnover is normal, high attrition can signal deeper issues.
 
-```{r}
-# Example code for the question
-1 + 1
-```
+**(a)** What kinds of consequences might high attrition have for a business?
+
+**(b)** What might cause employees to leave?
+
+**(c)** Why would a company want to predict or understand patterns in attrition?
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
 ::: {.content-visible when-profile="r-teaching-guide"}
@@ -22,20 +24,30 @@ Teaching Note
 🎯 **Learning Objective** 
 Students should:
 
-- XXXXX
+- Understand the concept of employee attrition and its business implications.
+- Reflect on potential drivers of employee turnover.
+- Recognize the importance of analyzing and predicting attrition patterns in organizations.
+
 
 ✅   **Core Concepts to Highlight**
 
-List them here
+- Definition of employee attrition (vs. layoffs or short-term leave)
+- Business impacts of high attrition (costs, morale, performance)
+- Common causes of attrition (e.g., dissatisfaction, distance, low pay)
+- Strategic value of predicting attrition
 
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-List as needed
+- “What kinds of businesses might be *especially* vulnerable to high attrition?”
+- “Have you seen any companies take steps to reduce turnover?”
+- “How might understanding attrition help in designing better workplaces?”
 
 📌 **Common Misunderstandings**
 
-List as needed
+- Assuming all attrition is bad — sometimes it's a natural or even healthy process
+- Focusing only on pay as a driver of attrition, ignoring other work and personal environment factors
+- Thinking prediction is only useful for HR, not realizing its value for strategy and operations
 
 :::
 
@@ -55,11 +67,29 @@ Solution
 
 ::: {.solution-block-body}
 
-Here’s the explanation and code:
+**(a) What kinds of consequences might high attrition have for a business?**
 
-```{r}
-print("Hello, world!")
-```
+- **Increased costs**: Hiring and training new employees is expensive.
+- **Loss of knowledge**: Experienced employees take valuable knowledge with them.
+- **Disruption to teams**: Team cohesion, workflows, and morale can be negatively affected.
+- **Reduced productivity**: New hires may take time to reach full effectiveness.
+- **Brand/reputation risks**: High attrition can signal a poor work environment, deterring future applicants.
+
+**(b) What might cause employees to leave?**
+
+- **Job dissatisfaction**: Poor management, lack of growth, or a toxic culture.
+- **Low compensation**: Employees may leave for better pay or benefits.
+- **Commute or location issues**: Long travel distances or relocations.
+- **Personal reasons**: Family needs, health, career changes.
+- **Lack of advancement opportunities**: Employees may feel stuck or underutilized.
+
+**(c) Why would a company want to predict or understand patterns in attrition?**
+
+- **Targeted retention strategies**: Identifying at-risk groups allows for proactive HR interventions.
+- **Workforce planning**: Helps forecast staffing needs and budget for recruitment/training.
+- **Improving employee experience**: Insights can guide workplace improvements.
+- **Reducing turnover costs**: Early warnings reduce the cost of attrition by improving retention.
+
 :::
 
 :::

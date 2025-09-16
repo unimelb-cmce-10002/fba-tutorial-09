@@ -1,12 +1,73 @@
-<!-- question-type: prepare -->
-### Exercise 5: Title
+<!-- question-type: inclass -->
+### Exercise 5: How many clusters should we use?
 
-This is the text for the question, with its accompanying code 
+Clustering requires us to pick a value for `k` — the number of clusters. But how do we decide what’s best?
+
+There are several methods we can use. Each has a different way of deciding whether the clusters are "tight" and "well separated."
+
+**(a)** What do you think could go wrong if we choose too few or too many clusters?
+
+**(b)** One common approach we encountered in the lecture is the **elbow method**.  
+What is the elbow method trying to do, in plain language?
+
+**(c)** Run the code below and look at the plot.  
+Where do you see a clear "elbow" or bend in the curve?  
+Based on the plot, what value of `k` would you choose?
 
 ```{r}
-# Example code for the question
-1 + 1
+#| eval: false
+fviz_nbclust(
+  df_scaled, 
+  kmeans,
+  method = "wss",     # Within-cluster sum of squares
+  k.max = 10,
+  nstart = 10
+)
 ```
+
+**(d)** One alternative to the elbow method is the silhouette method which looks at how well each point fits within its cluster vs. other clusters.
+Run the code below and report which value of `k` this method prefers.
+
+```{r}
+#| eval: false
+fviz_nbclust(
+  df_scaled, 
+  kmeans,
+  method = "silhouette"
+)
+```
+
+**(e)** Another alternative to the elbow method is the gap statistic which compares your clustering to what you’d expect from random data.
+Run the code below and report which value of `k` this method prefers.
+
+```{r}
+#| eval: false
+fviz_nbclust(
+  df_scaled,
+  kmeans,
+  method = "gap_stat",
+  nstart = 25,
+  iter.max = 50
+)
+```
+
+**(f)** Do all three methods agree on the best value of k? If not, how would you decide?
+
+**(g)** Based on your answer, pick a value for k, rerun the kmeans() function, and briefly describe the new clustering results.
+
+```{r}
+#| eval: false
+set.seed(123)
+kmeans_model <- kmeans(df_scaled, centers = YOUR_CHOICE, nstart = 10)
+
+fviz_cluster(
+  kmeans_model,
+  data = df_scaled,
+  palette = "jco",
+  ggtheme = theme_minimal()
+)
+```
+
 
 <!-- BEGIN PROFILE:r-teaching-guide -->
 ::: {.content-visible when-profile="r-teaching-guide"}
@@ -22,20 +83,40 @@ Teaching Note
 🎯 **Learning Objective** 
 Students should:
 
-- XXXXX
+- Understand the importance of selecting an appropriate number of clusters in K-means.
+- Explain in plain language how common methods for choosing k (elbow, silhouette, gap statistic) work.
+- Apply each method in R and interpret the outputs.
+- Make a justified choice of k based on multiple criteria.
 
 ✅   **Core Concepts to Highlight**
 
-List them here
+- K-means clustering requires a user-specified number of clusters (k).
+- Within-Cluster Sum of Squares (WSS) as a measure of compactness.
+- Elbow method: diminishing returns in WSS reduction.
+- Silhouette method: cohesion vs. separation.
+- Gap statistic: comparison to a reference distribution.
+- Model selection trade-offs: interpretability, stability, business relevance.
 
 
 💬 **Suggested In-Class Prompts** (if needed)
 
-List as needed
+“Can someone explain what the elbow method is trying to find, without using the word ‘elbow’?”
+
+“Why might different methods recommend different values for k? What does that tell us?”
+
+“Suppose silhouette says 2 but elbow and gap say 3 — what would you choose, and why?”
+
+“Does your chosen number of clusters make sense in business terms?”
 
 📌 **Common Misunderstandings**
 
-List as needed
+"Always choose the number with lowest WSS" – forgetting that WSS always drops with higher k.
+
+Thinking the goal is to make all clusters the same size – remind them that’s not required.
+
+Treating method output as absolute truth – emphasize judgment and context.
+
+Not rerunning kmeans() after choosing k – they need to redo clustering using their chosen value.
 
 :::
 
@@ -55,11 +136,96 @@ Solution
 
 ::: {.solution-block-body}
 
-Here’s the explanation and code:
+### (a) What could go wrong with too few or too many clusters?
+
+- **Too few clusters**: We may group together employees who are actually quite different. This hides useful variation and makes it hard to take targeted action.
+- **Too many clusters**: We might split up natural groupings and end up with tiny, unstable segments that are hard to interpret or act on.
+
+
+**(b)** What is the elbow method doing, in plain language?
+
+- The elbow method looks at how much **within-cluster variation** (WSS) drops as we increase `k`.
+- As we increase `k`, WSS will naturally decrease — but after a point, the **improvement slows down**.
+- The "elbow" is the value of `k` where the rate of improvement flattens — indicating that adding more clusters doesn’t improve fit by much.
+
+
+**(c)** What value of `k` would you choose based on the elbow plot?
 
 ```{r}
-print("Hello, world!")
+#| eval: true
+fviz_nbclust(
+  df_scaled, 
+  kmeans,
+  method = "wss",     # Within-cluster sum of squares
+  k.max = 10,
+  nstart = 10
+)
 ```
+
+Students might give slightly different answers, but **common responses** include:
+
+- If there’s a decrease in steepening around `k = 2` or `k = 3`, this is often a good choice.
+- Encourage students to **justify** their answer
+
+**(d)**
+
+```{r}
+#| eval: true
+fviz_nbclust(
+  df_scaled, 
+  kmeans,
+  method = "silhouette"
+)
+```
+
+2 clusters.
+
+- Students should read this directly from the **peak** of the silhouette plot.
+- Remind them that **higher silhouette values** mean **tighter and more distinct** clusters.
+
+**(e)**
+
+```{r}
+#| eval: false
+fviz_nbclust(
+  df_scaled,
+  kmeans,
+  method = "gap_stat",
+  # nstart of 25 stops the warning methods appearing for no gains
+  nstart = 25,
+  iter.max = 50
+)
+```
+
+- The **gap statistic** chooses the `k` where the gap between real and random data is largest.
+- This is  shown with **a bar or point marker** on the plot.
+- Common answer: **k = 3 or 4** depending on the simulationm in this example 1.
+
+**(f)**
+
+- Elbow suggest **k = 2 or 3**
+- Silhouette prefers **k =  3**
+- Gap statistic suggest **k = 1**
+- Students should reflect critically. For instance:
+  - "If both silhouette and gap agree on 3, but elbow suggests 1, I might choose 2."
+  - "If k = 3 produces more interpretable clusters, that's also a good reason to choose it."
+
+**(g)**
+
+```{r}
+set.seed(123)
+kmeans_model <- kmeans(df_scaled, centers = 2, nstart = 10)
+
+fviz_cluster(
+  kmeans_model,
+  data = df_scaled,
+  palette = "jco",
+  ggtheme = theme_minimal()
+)
+
+# if you have time, add these clusters back to the data and look at what they identify (tho one can infer this from Q4)
+```
+
 :::
 
 :::
