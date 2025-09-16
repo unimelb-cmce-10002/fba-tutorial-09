@@ -6,13 +6,64 @@
 
 By the end of this tutorial, you should be able to:
 
-- COMPLETE THIS
-- WITH MULTIPLE BULLETS
+- Understand key factors related to employee attrition and their potential impact on the business.
+- Apply clustering techniques (K-means, PCA) to uncover segments of employees with different characteristics.
+- Interpret and compare the resulting clusters in terms of job satisfaction, income, tenure, and attrition risk.
+- Evaluate how well the clustering reflects meaningful differences using visualizations and summary statistics.
 :::
 
 ## The Business Challenge
 
-Explain the Business Challenge and set up in this file
+### The Topic: Why are employees leaving — and how can we group them to better understand attrition? {.unnumbered}
+
+Every time an employee leaves, companies incur real costs — from lost productivity to recruitment and training. Understanding **which types of employees are most at risk of leaving** is a key priority for HR analytics.
+
+In this tutorial, we’ll use clustering techniques to group employees based on their characteristics and see whether some groups are more likely to quit. This lets us move beyond individual-level predictors to identify broader patterns and profiles — a common strategy in **descriptive analytics**.
+
+We'll also introduce **Principal Component Analysis (PCA)** — a method for reducing complexity while keeping the structure of the data intact.
+
+### The Data: HR Analytics Data on 1,470 Employees {.unnumbered}
+
+We'll be working with an anonymized dataset from a fictional company’s HR department. It includes detailed information on 1,470 employees, including:
+
+- **Personal characteristics**: `age`, `gender`, `marital_status`, `distance_from_home`
+- **Job-related features**: `job_satisfaction`, `monthly_income`, `years_at_company`, `department`
+- **Outcome**: `attrition` – whether the employee has left the company
+
+This gives us a rich set of variables to explore patterns in attrition and test whether employee segments differ in meaningful ways.
+
+### The Method: Clustering and PCA for Descriptive Segmentation {.unnumbered}
+
+Our goal is to **segment employees** into groups with similar profiles — and examine whether some segments are more prone to attrition. To do this, we’ll:
+
+1. **Prepare and normalize** the data so that all variables are on comparable scales  
+2. Use **K-means clustering** to group employees based on features like satisfaction, income, and commute distance  
+3. Use **PCA** to reduce the number of variables while preserving the main structure in the data  
+4. Interpret the resulting clusters — comparing their average characteristics and attrition rates
+
+We'll also explore how to choose the **right number of clusters**.
+
+### Loading the R packages and data
+
+Here's the packages we will need to complete the exercises:
+
+```{r}
+library(tidyverse)  # data manipulation and plotting
+library(janitor)    # cleaning column names
+library(recipes)    # For data preprocessing
+library(cluster)    # clustering
+library(factoextra) # k-means visualization and cluster evaluation
+library(broom)      # tidy output of clustering results
+```
+
+Let's load the data that we will use today:
+
+```{r}
+df <-
+    read_csv("data/hr_attrition.csv") |> 
+    # tidy up column names to snake_case 
+    clean_names()
+```
 
 ## Prepare these Exercises before Class 
 
