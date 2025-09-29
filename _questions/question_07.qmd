@@ -5,6 +5,7 @@
 ## Only complete if > 40 mins left in the tutorial!
 
 This exercise takes a while to complete. If there is less than 40 mins to go in class, skip this exercise and proceed to Exercise 8.
+Solutions will be posted after the tutorial.
 :::
 
 ::: {.callout-warning collapse=true}

@@ -153,6 +153,9 @@ fviz_cluster(
   ggtheme = theme_minimal(),
   main = "K-means Clustering Results"
 )
+
+##
+ggsave("_figs/ex_4c.png")
 ```
 **(d)**
 Cluster 2 looks well separated, lots of overlap between clusters 1 and 3.

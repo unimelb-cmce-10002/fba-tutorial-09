@@ -62,6 +62,7 @@ df_pca <- as_tibble(pca_model$x[, 1:YOUR_CHOICE])
 
 ```{r}
 #| eval: false
+set.seed(123)
 kmeans_pca <- kmeans(df_pca, centers = 3, nstart = 10)
 ```
 
@@ -219,9 +220,9 @@ fviz_cluster(kmeans_pca, data = df_pca)
 
 We find:
 
-The clusters are more clearly separated in PCA space
+- The clusters are more clearly separated in PCA space
 
-There's less overlap than in the original 5D space
+- There's less overlap than in the original 5D space
 
 Interpretation:
 PCA helps reduce noise and overlapping signals, so the clusters become tighter and better defined. Especially when some variables were correlated, PCA unbundles that structure and makes segmentation easier.

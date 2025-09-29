@@ -92,13 +92,22 @@ Solution
 
 ```{r}
 df |> 
-  group_by(department, attrition) |> 
+  group_by(attrition) |>
   summarise(n = n(), .groups = "drop") |> 
   mutate(share = n / sum(n))
 ```
 
 
 **(b)**
+
+```{r}
+df |> 
+  group_by(department, attrition) |>
+  summarise(n = n(), .groups = "drop") |> 
+  mutate(share = n / sum(n))
+```
+
+AND 
 
 ```{r}
 df |> 

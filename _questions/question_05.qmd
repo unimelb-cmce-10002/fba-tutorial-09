@@ -153,6 +153,11 @@ Solution
 
 ```{r}
 #| eval: true
+
+# remark: scaled data is stored in data, you can load it as
+# df_scaled <- 
+#   read_csv("data/hr_attrition_scaled.csv")
+
 fviz_nbclust(
   df_scaled, 
   kmeans,
@@ -199,12 +204,12 @@ fviz_nbclust(
 
 - The **gap statistic** chooses the `k` where the gap between real and random data is largest.
 - This is  shown with **a bar or point marker** on the plot.
-- Common answer: **k = 3 or 4** depending on the simulationm in this example 1.
+- Common answer: in this example 1.
 
 **(f)**
 
 - Elbow suggest **k = 2 or 3**
-- Silhouette prefers **k =  3**
+- Silhouette prefers **k =  2**
 - Gap statistic suggest **k = 1**
 - Students should reflect critically. For instance:
   - "If both silhouette and gap agree on 3, but elbow suggests 1, I might choose 2."
